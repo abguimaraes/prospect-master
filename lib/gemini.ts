@@ -3,11 +3,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { Lead } from './types';
 
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) throw new Error('GEMINI_API_KEY não configurada');
-
-const genAI = new GoogleGenerativeAI(apiKey);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+function getModel() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error('GEMINI_API_KEY não configurada');
+  const genAI = new GoogleGenerativeAI(apiKey);
+  return genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+}
 
 const SYSTEM_PROMPT = `
 Você é um assistente de vendas B2B que ajuda Anderson a prospectar donos de lojas físicas
@@ -41,6 +42,7 @@ Gere uma mensagem de prospecção para este lead:
 
 export async function gerarMensagem(lead: Lead): Promise<string> {
   try {
+    const model = getModel();
     const prompt = `${SYSTEM_PROMPT}\n\n${buildUserPrompt(lead)}`;
     const result = await model.generateContent(prompt);
     return result.response.text();
