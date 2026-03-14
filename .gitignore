@@ -42,3 +42,6 @@ next-env.d.ts
 
 # prospect-master runtime data (não commitar leads reais)
 data/leads.json
+
+.vercel
+.env*.local
